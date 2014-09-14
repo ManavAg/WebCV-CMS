@@ -1,0 +1,36 @@
+{
+  "name": "MongoDV",
+  "version": "0.1.0-13",
+  "private": true,
+  "author": "ManavA <Manav.agarwal4@gmail.com>",
+  "description": "MongoDB Database visualizer and Operation handler",
+  "contributors": [
+    {
+      "name": "Manav Agarwal",
+      "email": "Manav.agarwal4@gmail.com",
+      "url": "http://Manavagarwal.net/"
+    }
+  ],
+  "dependencies": {
+    "express": "*",
+    "mongodb": "*",
+    "connect": "*",
+    "swig": "*",
+    "consolidate": "*"
+  },
+  "subdomain": "MongoDV",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "os": "sunos",
+  "bundledDependencies": [
+    "connect",
+    "consolidate",
+    "express",
+    "mongodb",
+    "swig"
+  ]
+}

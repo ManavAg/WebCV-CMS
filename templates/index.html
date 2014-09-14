@@ -1,0 +1,95 @@
+<html>
+<head>
+<script src="C:/Users/Manav/Node/MongoX/public/Scripts/jquery-1.11.0.min.js"></script>
+<script src="C:/Users/Manav/Node/MongoX/public/Scripts/Bootstrap/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="C:/Users/Manav/Node/MongoX/public/Scripts/Bootstrap/css/bootstrap.min.css">
+<script>
+	$( document ).ready(function() {
+		 $(".dataset").hide();
+		 $("#newradio").hide();
+		 $("#inputs").hide(); 
+	});
+	function ShowRadio(a,b,c) { //a: radio buttons on data values b: New radio button c: Show input name and value fields
+		if(a==1){
+			$(".dataset").show(); 
+			if(b==1)
+				$("#newradio").show();
+			else $("#newradio").hide();
+		}
+		else {$(".dataset").hide(); $("#newradio").hide();}
+		if (c==1)
+			$("#inputs").show(); 
+		else
+			$("#inputs").hide(); 
+	}
+</script>
+</head>
+<body style="background-color:#E6E6FA">
+	<form method="post">
+		<div class="container-fluid">
+			<div class="row">
+				<input class="form-control" type="text" placeholder="Default input" name = "MDB" size='50' value= "mongodb://localhost:27017/course">
+					<center><select name= "collection" class="form-control">
+						<option  value="course.course">course</option>
+						<option value="course.system.indexes">system.indexes</option>
+						<option value="course.grades">grades</option>
+						<option value="course.manav">manav</option>
+					</select>
+					<div class="btn-group col-md-12" data-toggle="buttons">
+						<label class="btn btn-primary col-md-3">
+							<input type="radio" name="action" value="Show" onchange="ShowRadio(0,0,0)" checked>Show All
+						</label>
+						<label class="btn btn-success col-md-3">
+							<input type="radio" name="action" value="Insert" onchange="ShowRadio(1,1,1)">Insert
+						</label>
+						<label class="btn btn-info col-md-3">
+							<input type="radio" name="action" value="Remove" onchange="ShowRadio(1,0,0)">Remove
+						</label>
+						<label class="btn btn-warning col-md-3">
+							<input type="radio" name="action" value="Search" onchange="ShowRadio(0,0,1)">Search
+						</label>
+					</div>
+				<div id="inputs" style="width:30%;">
+					<input type="text" style="display:inline-block" class="form-control" name = "name" placeholder="Key">
+					<input type="text" style="display:inline-block" class="form-control" name = "value" placeholder="Value">
+				</div>
+				<button type="submit" class="btn btn-danger btn-lg">Submit</button>
+				<h2>Database</h2>
+				<div id="newradio"><input type="radio" class="dataset" name="dataset" value="new" checked>New</div>
+						<div class="panel-group" id="accordion">
+							  <div class="panel panel-default">
+								<div class="panel-heading">
+								  <h4 class="panel-title">
+									<input type="radio" class="dataset" name="dataset" value="0"> 
+									<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+									  Name : Alex
+									</a>
+								  </h4>
+								</div>
+								<div id="collapseOne" class="panel-collapse collapse">
+								  <div class="panel-body">
+									<li>Age : 25</li>
+									<li>Sex : Female</li>
+								  </div>
+								</div>
+								<div class="panel-heading">
+								  <h4 class="panel-title">
+									<input type="radio" class="dataset" name="dataset" value="1">
+									<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+									  Name : Manav
+									</a>
+								  </h4>
+								</div>
+								<div id="collapseTwo" class="panel-collapse collapse">
+								  <div class="panel-body">
+									<li>Age : 24</li>
+									<li>Sex : Male</li>
+								  </div>
+								</div>
+							  </div>
+						</div>
+			</div>
+		</div>	</center>
+	</form>
+</body>
+</html>

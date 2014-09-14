@@ -1,0 +1,10 @@
+{
+	"Summary": {"headers":["Points"], "type":0},
+	"Education": {"headers":["ID", "School", "Degree", "Description", "Thesis", "Keywords"], "type":1},
+	"Work": {"headers":["ID", "Company", "Title", "Description", "Thesis", "Keywords"], "type":1},
+	"Language": {"headers":["Language", "Description", "Level"], "type":1},
+	"IT": {"headers":["ID", "Technology", "Description", "Rating"], "type":2},
+	"Projects": {"headers":["Name","Description", "Keywords"], "type":2},
+	"Hobbies": {"headers":["Name", "Description"], "type":1}
+}
+		

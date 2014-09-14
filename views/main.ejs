@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="/public/Scripts/jquery-1.11.0.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	$( document ).ready(function() {
+		var a = $("#test").html();// Handler for .ready() called.
+		var b = !{JSON.stringify(data)}
+		alert(b);
+	});
+</script>
+</head>
+<body>
+	<form method="post">
+		Name: <input type="text" name = "name">
+		Age: <input type="text" name = "age">
+		Sex: <input type="text" name = "sex">
+		<input type="radio" name="action" value="Insert">Insert
+		<input type="radio" name="action" value="Remove">Remove
+		<input type="radio" name="action" value="Search">Search
+		<input type="submit">
+	</form>
+	<h2>Comment: 
+	{%= comment %}
+	</h2>
+	<h2>All data details:</h2>
+	{% for person in people %}
+		<ul>
+		{% for data in person %}
+				<li>{{ data }}</li>
+		{% endfor %}
+		</ul>
+	{% endfor %}
+</body>
+</html>

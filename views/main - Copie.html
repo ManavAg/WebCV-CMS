@@ -1,0 +1,189 @@
+<html>
+<head>
+	<script src="/public/Scripts/jquery-1.11.0.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+	<script>
+	var Len = 0;
+	$(document).ready( function() {
+		Len = parseInt($("#pointL").html());
+	});
+	
+	function Add(type, sector, tab)
+	{
+		var temp = "";
+		if (!type)
+		{
+			var temp = '<tr><td><label>Point : </label><input type = "text" name = \'data[ENG][Summary][Summary]\'></input></td></tr>';
+			$(".tab-pane.active").append(temp);
+		}
+		else if(type == 1)
+		{
+			var Len = parseInt($(".tab-pane.active div.length").html()) + 1;
+			$(".tab-pane.active div.length").html(Len)
+			var temp = $(".tab-pane.active > table > tbody > tr").html();
+			temp = temp.replace(/1\]\[/g, Len + '][');
+			$(".tab-pane.active > table").append("<tr class = 'new'>" + temp + "</tr>");
+			$(".new").find('input').val('');
+		}
+		else if(type == 2)
+		{
+			var Len = parseInt($(".tab-pane.active > div.length#L"+tab+sector).html()) + 1;
+			$(".tab-pane.active > div.length#L"+tab+sector).html(parseInt(Len))
+			var temp = $(".tab-pane.active #" + sector + " > tbody > tr").html();
+			console.log(temp);
+			temp = temp.replace(/\]\[item.+\]\[/g, '][item'+Len + '][');
+			$(".tab-pane.active > #" + sector + " > tbody").append("<tr class = 'new'>" + temp + "</tr>");
+			$(".new").find('input').val('');
+		}
+	}
+	
+	function Remove(e)
+	{
+		e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
+	}
+	function add(e)
+	{
+		var node=document.createElement("tr");
+		node.innerHTML = e.parentNode.parentNode.innerHTML;
+		//Len = parseInt($(e.parentNode.parentNode.parentNode.parentNode.parentNode).find("div.length").html()) + 1;
+		//$(e.parentNode.parentNode.parentNode.parentNode.parentNode).find(".length").html(Len);
+		$(node).find('input:text').val('');
+		//$(node).find('input:text').attr('name',$(node).find('input:text').attr('name').replace("0",Len));
+		e.parentNode.parentNode.parentNode.insertBefore(node,e.parentNode.parentNode);
+	}
+	function moveUp(e)
+	{
+		$(e.parentNode.parentNode).after($(e.parentNode.parentNode).prev());	
+	}
+	function moveDown(e)
+	{
+		$(e.parentNode.parentNode).before($(e.parentNode.parentNode).next());	
+	}
+	</script>
+</head>
+<body style="background-color:#E6E6FA">
+
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
+		{% for j, tab in data.ENG %}
+		<li><a href={{"#" + j}} role="tab" data-toggle="tab">{{tab.Heading}}</a></li>
+		{% endfor %}
+		<li><a href="#landing" role="tab" data-toggle="tab">Landing</a></li>
+	</ul>
+	
+	<form action = "/" method = "POST">
+		<div class="tab-content">
+			<div class="tab-pane active" id="home">...</div>
+			<input type = "submit" class = "btn btn-lg btn-success"/>
+			{% for tab,Tpoint in data.ENG %}
+				<div class="tab-pane" id={{tab}}>
+					<label>Heading : </label>
+					<input type = "text" value = '{{ data.ENG[tab].Heading }}' name = {{'data[ENG]['+ tab +'][Heading]'}}></input>
+					<table class="col-md-12">
+					
+						{% if tab == "Summary" %}
+							<tr><td>
+								<input type = "button" class="btn btn-lg btn-primary" value = "Add" onClick = "Add();"/>
+							</tr></td>	
+							{% for j, Lang in data.ENG[tab][tab] %}
+							<tr>
+								<td>
+									<button type = "button" class="btn btn-danger btn-small" onClick =  "Remove(this);">X</button>
+								</td>
+								<td>
+									<button type = "button" class="btn btn-success btn-small" onClick =  "add(this);">+</button>
+								</td>
+								<td>
+									<label>Point : </label>
+									<input type = "text" value = '{{ Lang }}' name = {{'data[ENG][' + tab + '][' + tab + ']'}}></input>
+								</td>
+							</tr>
+							{% endfor %}
+											
+						{% elseif data.ENG[tab][tab] %}
+							<thead>
+								<tr><td>
+									<input type = "button" class="btn btn-lg btn-primary" value = "Add" onClick = "Add(1, '{{tab}}');"/>
+								</td></tr>
+								<tr>
+									{% for k, sector in data.ENG[tab][tab] %}
+									<th>{{k}}</th>
+									{% endfor %}
+							</thead>
+							<tbody>
+								{% set x = 0 %}
+								{% for j, sector in data.ENG[tab][tab] %}
+								<tr>
+									<td>
+										<button type = "button" class="btn btn-danger btn-small" onClick =  "Remove(this);">X</button>
+									</td>
+									<td>
+										<button type = "button" class="btn btn-success btn-small" onClick =  "moveUp(this);">UP</button>
+									</td>
+									<td>
+										<button type = "button" class="btn btn-success btn-small" onClick =  "moveDown(this);">Down</button>
+									</td>
+									{% for k, col in sector %}
+									<td>
+										<label>{{k}} : </label>
+										<input type = "text" value = '{{ col }}' name = {{'data[ENG][' + tab + '][' + tab + '][' + x + '][' + k + ']'}}></input>
+									</td>
+									{% endfor %}
+								</tr>
+								{% set x = x + 1 %}
+								{% endfor %}
+							</tbody>
+							<div class = "length" hidden>{{x}}</div>
+						{% else %}
+							{% for i, Sector in data.ENG[tab].Sectors %}	
+								<table id = {{i}}>
+									<thead>
+										<tr>
+											<td>
+												<input type = "button" class="btn btn-lg btn-primary" value = "Add" onClick = 'Add(2, "{{i}}", "{{tab}}");'/>
+											</td>	
+											<th>{{Sector.Name}}</th>
+										</tr>
+									</thead>
+									<tbody>
+									{% set x = 0 %}
+									{% for j, Lang in Sector[tab] %}
+									<tr>
+										<td>
+											<button type = "button" class="btn btn-danger btn-small" onClick =  "Remove(this);">X</button>
+										</td>
+										<td>
+											<button type = "button" class="btn btn-success btn-small" onClick =  "moveUp(this);">UP</button>
+										</td>
+										<td>
+											<button type = "button" class="btn btn-success btn-small" onClick =  "moveDown(this);">Down</button>
+										</td>
+										{% for k, col in Lang %}
+										<td>
+											<label>{{k}} : </label>
+											<input type = "text" value = '{{ col }}' name = {{'data[ENG][' + tab + '][Sectors][' + i + '][' + tab + '][' + j + '][' + k + ']'}}></input>
+										</td>
+										{% endfor %}
+									</tr>
+									{% set x = x + 1 %}
+									{% endfor %}
+									</tbody>
+									<div class = "length" id = {{"L" + tab + i}} hidden>{{x}}</div>
+								</table>
+							{% endfor %}
+						
+						{% endif %}
+					
+					</table>
+				</div>
+			{% endfor %}
+			
+			<div class="tab-pane" id="Landing">...</div>
+		</div>
+	</form>
+	
+	<div id = "pointL" hidden>{{data.ENG.Summary.Points.length}}</div>
+</body>
+</html>

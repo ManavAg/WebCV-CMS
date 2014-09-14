@@ -1,0 +1,10 @@
+<html>
+	Name: <input type="text" id = "name"></input>
+	Age: <input type="text" id = "age"></input>
+	Sex: <input type="text" id = "sex"></input>
+	<a href="/insert">Insert</a>
+	<h2>All data details:</h2>
+	{% for person in people %}
+		<h3>{{ person.name }} is a {{ person.sex }} of {{ person.age }} years.</h3>
+	{% endfor %}
+</html>

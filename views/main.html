@@ -1,0 +1,252 @@
+<html>
+<head>
+	<script src="/public/Scripts/jquery-1.11.0.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+	<script>
+	$(document).ready(function () {
+   $(".up,.down").click(function () {
+      var $element = this;
+      var row = $($element).parents("tr:first");
+
+      if($(this).is('.up')){
+         row.insertBefore(row.prev());
+      } 
+      else{
+         row.insertAfter(row.next());
+      }
+
+  });
+	});
+	function AddNew(type, tab)
+	{
+		if(type == 0)
+		{
+			var temp = '<tr>' + $("#defaultBtns").html();
+			temp = temp + "<td><input type = 'text' value = '' name = 'data["+tab+"]["+tab+"]'/></td></tr>";
+			$(".tab-pane.active > table").append(temp);
+		}
+		else if (type == 1)
+		{
+			var Len = parseInt($(".tab-pane.active div.length").html()) + 1;
+			$(".tab-pane.active div.length").html(Len)
+			headers = $("#headers" + tab).html().split(',');
+			var temp = '<tr>' + $("#defaultBtns1").html();
+			for (header in headers)
+				temp = temp + "<td><input type = 'text' value = '' name = 'data["+tab+"]["+tab+"]["+Len+"]'/></td>"
+			temp = temp + "</tr>"
+			$(".tab-pane.active > table >tbody").append(temp);
+		}
+		else if (type == 2)
+		{
+			var Len = parseInt($(".tab-pane.active div.length#L"+tab).html()) + 1;
+			$(".tab-pane.active div.length#L"+tab).html(Len)
+			var temp = '<table><thead><tr><td><input type = "button" class="btn btn-lg btn-primary" value = "Add" onClick = \'Add(this,"'+tab+'",'+Len+');\'/></td><th><input type = "text" value = "" name = "data['+ tab +'][Sectors]['+Len+'][Heading]"/></th></tr><tr><th/><th/><th/>';
+			headers = $("#headers" + tab).html().split(',');
+			console.log(headers);
+			headers.forEach(function(header){
+				temp = temp + '<th>'+header+'</th>'
+			});
+			temp = temp + '</tr></thead><tbody></tbody><div class = "length" id = "L' + Len + tab + '" hidden>0</div></table>';
+			$(".tab-pane.active").append(temp);
+		}
+	}
+	
+	function Add(e, tab, Length)
+	{
+		var Len = parseInt($(".tab-pane.active div.length#L"+Length+tab).html()) + 1;
+		$(".tab-pane.active div.length#L"+Length+tab).html(Len);
+		var temp = '<tr>' + $("#defaultBtns1").html();
+		headers = $("#headers" + tab).html().split(',');
+		for (header in headers)
+			temp = temp + "<td><input type = 'text' value = '' name = 'data["+tab+"][Sectors]["+Length+"][values]["+(Len-1)+"]'/></td>";
+		temp = temp + "</tr>";
+			
+		$(e.parentNode.parentNode.parentNode.parentNode).find("tbody").append(temp);
+	}
+	
+	function remove(e)
+	{
+	console.log(e.parentNode.parentNode.parentNode.innerHTML);
+		e.parentNode.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode.parentNode);
+	}
+	function add(e)
+	{
+		var node=document.createElement("tr");
+		node.innerHTML = e.parentNode.parentNode.innerHTML;
+		$(node).find('input:text').val('');
+		e.parentNode.parentNode.parentNode.insertBefore(node,e.parentNode.parentNode);
+	}
+	function moveUp(e)
+	{
+		/*$(e.parentNode.parentNode).children('td').each(function(i, tags){
+				$(tags).children('input').each(function(i, input){
+					$(e.parentNode.parentNode).prev().children('td')
+					console.log($(input).val());
+				});
+		});
+		*/
+		console.log($(e.parentNode.parentNode).html());
+		$(e.parentNode.parentNode).after($(e.parentNode.parentNode).prev());	
+	}
+	function moveDown(e)
+	{
+		$(e.parentNode.parentNode).before($(e.parentNode.parentNode).next());	
+	}
+	</script>
+</head>
+<body style="background-color:#E6E6FA">
+	<div hidden>
+		{% for j, tab in header %}
+			<div id ={{"headers"+j}}>{{tab.headers}}</div>
+		{% endfor %}	
+		<table>
+			<tr id = "defaultBtns0">
+				<td>
+					<button type = "button" class="btn btn-danger btn-small" onClick =  "remove(this);">X</button>
+				</td>
+				<td>
+					<button type = "button" class="btn btn-success btn-small" onClick =  "add(this);">+</button>
+				</td>
+			</tr>
+			<tr id = "defaultBtns1">
+				<td>
+					<button type = "button" class="btn btn-danger btn-small" onClick =  "remove(this);">X</button>
+				</td>
+				<td>
+					<button type = "button" class="btn btn-success btn-small" onClick =  "moveUp(this);">UP</button>
+				</td>
+				<td>
+					<button type = "button" class="btn btn-success btn-small" onClick =  "moveDown(this);">Down</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
+		{% for tab, xx in header %}
+			<li><a href={{"#" + tab}} role="tab" data-toggle="tab">{{tab}}</a></li>
+		{% endfor %}
+		<li><a href="#landing" role="tab" data-toggle="tab">Landing</a></li>
+	</ul>
+	
+	<form action = "/" method = "POST">
+		<div class="tab-content">
+			<div class="tab-pane active" id="home">...</div>
+			<input type = "submit" class = "pull-right btn btn-lg btn-success"/>
+			{% for tab, xx in header %}
+				{% if !data[tab] %}
+					{% set data[tab] = {} %}
+				{% endif %}
+				<div class="tab-pane" id={{tab}}>
+					<input type = "text" value = '{{ data[tab].Heading || "" }}' name = {{'data['+ tab +'][Heading]'}}></input>
+										
+						{% if header[tab]['type'] == 0 %}
+						<input type = "button" class="btn btn-lg btn-primary" value = "Add New Row" onClick = "AddNew(0, '{{tab}}');"/>
+						<table>
+					
+							{% for j in (data[tab][tab] || {}) %}
+							<tr>
+								<td>
+									<button type = "button" class="btn btn-danger btn-small" onClick =  "remove(this);">X</button>
+								</td>
+								<td>
+									<button type = "button" class="btn btn-success btn-small" onClick =  "add(this);">+</button>
+								</td>
+								<td>
+									<input type = "text" value = '{{ j }}' name = {{'data[' + tab + '][' + tab + ']'}}></input>
+								</td>
+							</tr>
+							{% endfor %}
+						</table>
+												
+						{% endif %}
+					
+						{% if header[tab]['type'] == 1 %}
+							<input type = "button" class="btn btn-lg btn-primary" value = "Add New Row" onClick = "AddNew(1, '{{tab}}');"/>
+							<table>
+								<thead>
+									<th></th>
+									<th></th>
+									<th></th>
+									{% for header in header[tab]['headers'] %}
+										<th>{{header}}</th>
+									{% endfor %}
+								</thead>
+								<tbody>
+									{% set x = 0 %}
+									{% for j, sector in (data[tab][tab] || {}) %}
+									<tr>
+										<td>
+											<button type = "button" class="btn btn-danger btn-small" onClick =  "remove(this);">X</button>
+										</td>
+										<td>
+											<button type = "button" class="btn btn-success btn-small" onClick =  "moveUp(this);">UP</button>
+										</td>
+										<td>
+											<button type = "button" class="btn btn-success btn-small" onClick =  "moveDown(this);">Down</button>
+										</td>
+										{% for k, col in (sector || {}) %}
+										<td>
+											<input type = "text" value = '{{ col }}' name = {{'data[' + tab + '][' + tab + '][' + x + ']'}}></input>
+										</td>
+										{% endfor %}
+									</tr>
+									{% set x = x + 1 %}
+									{% endfor %}
+								</tbody>
+								<div class = "length" hidden>{{x}}</div>
+							</table>
+							{% endif %}
+						{% if header[tab]['type'] == 2 %}
+							<input type = "button" class="btn btn-lg btn-primary" value = "Add New Row" onClick = "AddNew(2, '{{tab}}');"/>
+							{% set x = 0 %}
+							{% for Sector in data[tab].Sectors || {} %}	
+								<table>
+									<thead>
+										<tr>
+											<td>
+												<input type = "button" class="btn btn-lg btn-primary" value = "Add" onClick = 'Add(2, "{{i}}", "{{tab}}");'/>
+											</td>	
+											<th><input type = "text" value = '{{Sector.Heading || ""}}' name= {{'data[' + tab + '][Sectors][' + x + '][Heading]'}} ></input></th>
+										</tr>
+									</thead>
+									<tbody>
+									{% set y = 0 %}
+									{% for j, Item in (Sector.values || {}) %}
+										<tr>
+											<td>
+												<button type = "button" class="btn btn-danger btn-small" onClick =  "remove(this);">X</button>
+											</td>
+											<td>
+												<button type = "button" class="btn btn-success btn-small" onClick =  "moveUp(this);">UP</button>
+											</td>
+											<td>
+												<button type = "button" class="btn btn-success btn-small" onClick =  "moveDown(this);">Down</button>
+											</td>
+											{% for k, col in Item || {} %}
+											<td>
+												<label>{{k}} : </label>
+												<input type = "text" value = '{{ col }}' name = {{'data[' + tab + '][Sectors][' + x + '][values][' + y + ']'}}></input>
+											</td>
+											{% endfor %}
+										</tr>
+										{% set y = y + 1 %}
+									{% endfor %}
+									</tbody>
+									<div class = "length" id = {{"L" + Sector + tab + i}} hidden>{{y}}</div>
+								</table>
+								{% set x = x + 1 %}
+							{% endfor %}
+							<div class = "length" id = {{"L" + tab + i}} hidden>{{x}}</div>
+						{% endif %}
+					
+				</div>
+			{% endfor %}
+			
+			<div class="tab-pane" id="Landing">...</div>
+		</div>
+	</form>
+</body>
+</html>
